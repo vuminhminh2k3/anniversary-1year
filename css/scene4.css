@@ -1,0 +1,42 @@
+/* ============================================================
+   PHẦN 4 — Phong bì & bức thư (vẽ SVG, có animation mở)
+   ============================================================ */
+#scene4{background:linear-gradient(160deg,var(--pink-100),var(--pink-50))}
+.env-scene{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+
+/* khung ruy-băng tim phát sáng (sau phong bì) */
+.env-frame{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);
+  width:min(96vw,600px);max-height:96vh;pointer-events:none;z-index:0}
+.ribbon-heart{stroke-dasharray:1;stroke-dashoffset:1;animation:ribbonDraw 4.2s ease .2s forwards}
+@keyframes ribbonDraw{to{stroke-dashoffset:0}}
+.fh{transform-box:fill-box;transform-origin:center;will-change:transform}
+.fh.a{animation:fhFloat 4.2s ease-in-out infinite}
+.fh.b{animation:fhFloat 5.4s ease-in-out .6s infinite}
+.fh.c{animation:fhFloat 3.6s ease-in-out 1.1s infinite}
+@keyframes fhFloat{0%,100%{transform:translateY(0);opacity:.65}50%{transform:translateY(-8px);opacity:1}}
+
+/* phong bì */
+.env{position:relative;width:min(86vw,400px);aspect-ratio:320/230;z-index:1;
+  filter:drop-shadow(0 16px 34px rgba(150,20,60,.5))}
+.env-base,.env-front,.env-top{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.env-base{z-index:1}
+.env-front{z-index:3}
+.env-top{z-index:4}
+.flap{transform-box:fill-box;transform-origin:top center;transition:transform 1s ease}
+#scene4.open .flap{transform:rotateX(172deg)}
+/* khi MỞ: nắp + dấu tim lui RA SAU bìa; lá thư trắng lên TRÊN bìa */
+#scene4.open .env-top{z-index:2}
+#scene4.open .letter{z-index:5}
+
+/* bức thư thật -> trượt lên chui ra khi mở */
+.letter{
+  position:absolute;left:9%;right:9%;top:30%;z-index:2;
+  background:#fff7f2;border-radius:8px;box-shadow:0 10px 26px rgba(150,20,60,.4);
+  padding:16px 16px 18px;max-height:64vh;overflow:auto;
+  opacity:0;transform:translateY(46%) scale(.96);
+  transition:transform 1.05s cubic-bezier(.25,.8,.3,1),opacity .5s ease;
+}
+#scene4.letter-out .letter{opacity:1;transform:translateY(-66%) scale(1)}
+.letter h3{font-family:"Dancing Script",cursive;color:var(--rose);margin:.1em 0 .5em;font-size:1.8rem}
+.letter p{line-height:1.7;margin:.55em 0}
+.letter .sign{text-align:right;font-family:"Dancing Script",cursive;font-size:1.3rem;color:var(--rose)}

@@ -1,0 +1,25 @@
+/* ============================================================
+   PHẦN 3 — Lá tim (ảnh) bay theo gió
+   ============================================================ */
+#scene3{background:linear-gradient(160deg,var(--pink-100),var(--pink-50))}
+#windField{position:absolute;inset:0;overflow:hidden}
+.leaf-photo{
+  position:absolute;left:0;top:0;width:var(--sz);height:var(--sz);
+  -webkit-mask:var(--heart) center/contain no-repeat;
+          mask:var(--heart) center/contain no-repeat;
+  background-size:cover;background-position:center;
+  will-change:transform;opacity:0;
+  filter:drop-shadow(0 4px 8px rgba(214,51,108,.25));
+}
+/* sau khi nở ra từ giữa -> trôi nhẹ tại chỗ */
+.leaf-photo{cursor:pointer}
+.leaf-photo.float{animation:pfloat var(--fd,4s) ease-in-out infinite}
+@keyframes pfloat{0%,100%{transform:translate(0,0) scale(1) rotate(var(--rr,0deg))}
+  50%{transform:translate(var(--dx,10px),var(--dy,-14px)) scale(1.03) rotate(calc(var(--rr,0deg) + 6deg))}}
+/* bấm ảnh -> mờ màn + phóng to ảnh */
+.photo-lightbox{position:absolute;inset:0;z-index:40;display:none;align-items:center;justify-content:center;
+  background:rgba(70,25,45,.55);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);
+  opacity:0;transition:opacity .35s ease;cursor:zoom-out}
+.photo-lightbox.show{display:flex;opacity:1}
+.lb-img{max-width:84vw;max-height:84vh;border-radius:16px;background:#fff;
+  box-shadow:0 24px 70px rgba(0,0,0,.45);will-change:transform}

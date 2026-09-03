@@ -1,0 +1,74 @@
+/* ---------- PHẦN 3: gió + lá ảnh ---------- */
+let windBuilt=false, dlgTimer=null;
+let windListener=false;
+function initWind(){
+  if(!windBuilt){ buildLeaves(Math.max(120, PHOTOS.length)); windBuilt=true; }  // >= số ảnh -> ảnh nào cũng hiện
+  scheduleDialog();
+  if(windListener) return; windListener=true;
+  document.getElementById('scene3').addEventListener('click',(e)=>{
+    if(e.target.closest('.dialog-overlay')) return;
+    if(e.target.closest('.photo-lightbox')){ closeLightbox(); return; }   // bấm nền mờ -> đóng
+    const leaf=e.target.closest('.leaf-photo');
+    if(leaf && leaf.dataset.src){ openLightbox(leaf.dataset.src, leaf); return; } // bấm ảnh -> phóng to
+    showDialog3();                                                          // bấm nền -> dialog
+  });
+}
+function openLightbox(src, leaf){
+  if(window.playSfx) playSfx('photo_open');
+  const lb=document.getElementById('lightbox'), img=document.getElementById('lbImg');
+  img.src=src;
+  clearTimeout(dlgTimer);                        // đang xem ảnh thì tạm dừng dialog
+  lb.classList.add('show');
+  // bay từ vị trí ảnh vừa bấm -> phóng to vào giữa
+  const r=leaf.getBoundingClientRect();
+  const dx=(r.left+r.width/2)-window.innerWidth/2;
+  const dy=(r.top+r.height/2)-window.innerHeight/2;
+  img.animate([
+    {transform:`translate(${dx.toFixed(0)}px,${dy.toFixed(0)}px) scale(.1) rotate(-6deg)`,opacity:.3,offset:0},
+    {transform:'translate(0px,0px) scale(1) rotate(0deg)',opacity:1,offset:1}
+  ],{duration:520,easing:'cubic-bezier(.2,.85,.3,1.2)',fill:'both'});
+}
+function closeLightbox(){ document.getElementById('lightbox').classList.remove('show'); scheduleDialog(); }
+function buildLeaves(n){
+  const field=document.getElementById('windField');
+  const rand=(a,b)=>a+Math.random()*(b-a);
+  const vpCx=window.innerWidth/2, vpCy=window.innerHeight/2;
+  for(let i=0;i<n;i++){
+    const d=document.createElement('div');
+    d.className='leaf-photo';
+    const sz=rand(40,80);
+    d.style.width=sz+'px'; d.style.height=sz+'px';
+    d.style.setProperty('--heart',HEART);
+    if(PHOTOS.length){ const src=PHOTOS[i%PHOTOS.length]; d.style.backgroundImage=`url("${src}")`; d.dataset.src=src; }
+    else{ d.style.background=`linear-gradient(135deg,${PLACEHOLDER_GRAD[i%PLACEHOLDER_GRAD.length]},#fff6)`; }
+    // vị trí đích (toả khắp màn)
+    const tx=rand(3,97)/100*window.innerWidth, ty=rand(6,92)/100*window.innerHeight;
+    d.style.left=(tx-sz/2)+'px'; d.style.top=(ty-sz/2)+'px';
+    const rr=rand(-30,30);
+    d.style.setProperty('--rr',rr+'deg');
+    d.style.setProperty('--dx',rand(-16,16)+'px');
+    d.style.setProperty('--dy',rand(-22,22)+'px');
+    d.style.setProperty('--fd',rand(3,6)+'s');
+    field.appendChild(d);
+    // NỞ RA TỪ GIỮA (tụ giữa -> toả từ từ)
+    const cx=vpCx-tx, cy=vpCy-ty;
+    const anim=d.animate([
+      {transform:`translate(${cx.toFixed(0)}px,${cy.toFixed(0)}px) scale(.1)`,opacity:0,offset:0},
+      {transform:`translate(${cx.toFixed(0)}px,${cy.toFixed(0)}px) scale(.35)`,opacity:1,offset:.12},
+      {transform:`translate(0px,0px) scale(1) rotate(${rr}deg)`,opacity:1,offset:1}
+    ],{duration:1900,delay:rand(0,1500),easing:'cubic-bezier(.2,.7,.3,1)',fill:'forwards'});
+    anim.onfinish=()=>{
+      anim.commitStyles(); anim.cancel();       // giữ vị trí, nhả quyền transform
+      d.style.opacity='1';
+      const ex=rand(-150,150), ey=rand(-130,130), er=rand(-22,22);
+      d.animate([                                // trôi qua lại liên tục (di chuyển)
+        {transform:`translate(0px,0px) rotate(${rr}deg)`},
+        {transform:`translate(${ex.toFixed(0)}px,${ey.toFixed(0)}px) rotate(${(rr+er).toFixed(0)}deg)`}
+      ],{duration:rand(6000,13000),direction:'alternate',iterations:Infinity,easing:'ease-in-out'});
+    };
+  }
+}
+let dlgFirst=true;
+function scheduleDialog(){ clearTimeout(dlgTimer); dlgTimer=setTimeout(showDialog3, dlgFirst?300000:60000); } // 5p lần đầu, sau 1p
+function showDialog3(){ if(window.playSfx) playSfx('dialog3'); document.getElementById('dlg3').classList.add('show'); dlgFirst=false; }
+function keepWatching(){ document.getElementById('dlg3').classList.remove('show'); scheduleDialog(); }  // Xem tiếp -> hẹn 1p

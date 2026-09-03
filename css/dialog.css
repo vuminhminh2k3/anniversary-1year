@@ -1,0 +1,32 @@
+/* Dialog chung */
+.dialog-overlay{
+  position:absolute;inset:0;display:none;align-items:center;justify-content:center;
+  background:rgba(106,44,71,.28);backdrop-filter:blur(3px);z-index:20;padding:20px;
+}
+.dialog-overlay.show{display:flex}
+.dialog{
+  background:#fff;border-radius:22px;padding:28px 26px;max-width:340px;width:100%;
+  text-align:center;box-shadow:var(--shadow);
+}
+.dialog p{margin:0 0 20px;font-size:1.1rem;font-weight:500}
+.dialog .row{display:flex;gap:14px;justify-content:center;align-items:center;flex-wrap:wrap}
+.dialog .feedback{margin-top:14px;min-height:1.2em;font-size:.95rem;color:var(--pink-600);font-weight:600}
+.dialog.shake{animation:dlgShake .45s cubic-bezier(.36,.07,.19,.97)}
+@keyframes dlgShake{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}
+  30%,50%,70%{transform:translateX(-8px)}40%,60%{transform:translateX(8px)}}
+
+/* lời kể — nằm ở ĐẦU màn animation, thuộc lớp animation nên veil làm mờ luôn */
+.p1-say{position:absolute;left:50%;top:6%;transform:translate(-50%,-10px);
+  max-width:88vw;text-align:center;font-size:1.7rem;font-weight:700;color:var(--ink);
+  font-family:"Dancing Script",cursive;letter-spacing:.3px;
+  text-shadow:0 1px 8px rgba(255,255,255,.85),0 2px 16px rgba(255,255,255,.6);
+  opacity:0;transition:opacity .5s ease,transform .5s ease;pointer-events:none}
+#scene1.give .p1-say{opacity:1;transform:translate(-50%,0)}
+
+/* hiệu ứng chúc mừng khi chọn đúng */
+.confetti-piece{position:absolute;top:50%;left:50%;font-size:26px;line-height:1;pointer-events:none;z-index:40;
+  will-change:transform,opacity;animation:confBurst var(--cd,1.2s) cubic-bezier(.2,.7,.3,1) forwards}
+@keyframes confBurst{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.2)}
+  12%{opacity:1;transform:translate(-50%,-50%) scale(1.1)}
+  100%{opacity:0;transform:translate(calc(-50% + var(--cx)),calc(-50% + var(--cy))) rotate(var(--cr)) scale(.9)}}

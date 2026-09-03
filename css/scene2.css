@@ -1,0 +1,65 @@
+/* ============================================================
+   PHẦN 2 — Cây tim mọc dần
+   ============================================================ */
+#scene2{background:radial-gradient(125% 95% at 50% 40%,#ffffff 0%,#fff2f7 45%,#ffdcea 100%)}
+#scene2 .tree-wrap{position:relative;width:min(94vw,680px);aspect-ratio:6/5;cursor:pointer;max-height:90vh}
+#scene2 .tree-svg{width:100%;height:100%;overflow:visible}
+#tree-highlights{display:none}   /* elip highlight thừa -> ẩn */
+/* thân + rễ mọc lên từ gốc */
+#big-trunk{transform-box:fill-box;transform-origin:bottom center;transform:scaleY(0);animation:grow 1.1s cubic-bezier(.3,.9,.3,1) forwards}
+@keyframes grow{to{transform:scaleY(1)}}
+/* cành vẽ dần */
+#branches path{stroke-dasharray:2000;stroke-dashoffset:2000;animation:draw 1s ease forwards}
+#branches path:nth-child(1){animation-delay:.9s}
+#branches path:nth-child(2){animation-delay:1.05s}
+#branches path:nth-child(3){animation-delay:1.15s}
+#branches path:nth-child(4){animation-delay:.95s}
+#branches path:nth-child(5){animation-delay:1.1s}
+#branches path:nth-child(6){animation-delay:1.2s}
+#branches path:nth-child(7){animation-delay:1.3s}
+#branches path:nth-child(8){animation-delay:1.25s}
+@keyframes draw{to{stroke-dashoffset:0}}
+/* tim pop lần lượt */
+.tree-svg .heart{transform-box:fill-box;transform-origin:center;opacity:0;transform:scale(0)}
+.tree-svg .heart.pop{animation:hpop .5s cubic-bezier(.34,1.56,.5,1) forwards}
+@keyframes hpop{to{opacity:1;transform:scale(1)}}
+/* CHUYỂN CẢNH: animate CHÍNH tim thật trên cây (toả->thu) + nhóm cành/thân trượt góc */
+#scene2.blow .tree-fx{opacity:0;transition:opacity .5s}
+#scene2.blow #tree-sparkles,#scene2.blow #branch-drops,#scene2.blow #tree-highlights{opacity:0;transition:opacity .4s}
+#scene2.blow .hint{opacity:0;transition:opacity .3s}
+.fly{will-change:transform}
+/* gió vút qua */
+.wind-streak{position:absolute;inset:0;pointer-events:none;opacity:0;z-index:4;
+  background:linear-gradient(115deg,transparent 42%,rgba(255,255,255,.8) 50%,transparent 58%);
+  transform:translateX(-70%)}
+#scene2.blow .wind-streak{animation:gust .85s ease-out}
+@keyframes gust{0%{opacity:0;transform:translateX(-70%)}30%{opacity:.95}100%{opacity:0;transform:translateX(80%)}}
+/* rung nhẹ khi sẵn sàng */
+/* (bỏ hiệu ứng đung đưa cây) */
+/* cành lẻ nhỏ đỡ mỗi trái tim */
+.twig{fill:none;stroke:#6b4530;stroke-linecap:round;
+  stroke-dasharray:300;stroke-dashoffset:300;animation:twigdraw .5s ease forwards}
+@keyframes twigdraw{to{stroke-dashoffset:0}}
+/* tim rơi TỪ cành cây (trong SVG) */
+.svg-drop{transform-box:fill-box;transform-origin:center;
+  animation:svgdrop var(--sd,7s) ease-in var(--sdl,0s) infinite}
+@keyframes svgdrop{0%{opacity:0;transform:translate(0,0) rotate(0)}
+  8%{opacity:1}86%{opacity:.9}100%{opacity:0;transform:translate(var(--sx,10px),var(--sy,560px)) rotate(var(--sr,200deg))}}
+/* tim/hoa rơi khắp cảnh */
+.tree-fx{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:3}
+.fx-heart{position:absolute;top:0;width:var(--s,22px);height:var(--s,22px);opacity:0;
+  -webkit-mask:var(--heart) center/contain no-repeat;mask:var(--heart) center/contain no-repeat;
+  background:var(--c,#ff7ba7);will-change:transform;
+  animation:fxfall var(--d,9s) linear var(--dl,0s) infinite}
+@keyframes fxfall{0%{opacity:0;transform:translate(0,-12vh) rotate(0)}
+  10%{opacity:.9}88%{opacity:.9}100%{opacity:0;transform:translate(var(--dx,20px),112vh) rotate(var(--r,220deg))}}
+/* tim rụng TỪ tán cây xuống */
+.fx-drop{animation-name:fxdrop}
+@keyframes fxdrop{0%{opacity:0;transform:translate(0,0) scale(.6) rotate(0)}
+  10%{opacity:.95;transform:translate(0,4vh) scale(1) rotate(10deg)}
+  88%{opacity:.9}100%{opacity:0;transform:translate(var(--dx,20px),88vh) rotate(var(--r,220deg))}}
+/* sao lấp lánh trên cây */
+.twinkle-star{transform-box:fill-box;transform-origin:center;
+  animation:tstar var(--td,2s) ease-in-out var(--tdl,0s) infinite}
+@keyframes tstar{0%,100%{opacity:.08;transform:scale(.25) rotate(0)}
+  50%{opacity:1;transform:scale(1) rotate(45deg)}}

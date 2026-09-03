@@ -1,0 +1,110 @@
+/* ============================================================
+   PHẦN 1 — Công viên, trao hoa
+   ============================================================ */
+/* màn bắt đầu */
+.start-gate{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;text-align:center;color:var(--rose);
+  background:radial-gradient(120% 100% at 50% 35%,var(--pink-100),var(--pink-50) 60%,var(--cream));
+  transition:opacity .6s ease}
+.start-gate.hide{opacity:0;pointer-events:none}
+.sg-heart{font-size:4rem;animation:sgBeat 1.2s ease-in-out infinite}
+@keyframes sgBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
+.sg-title{font-family:"Dancing Script",cursive;font-weight:700;font-size:2.4rem;margin:.2em 0 .1em}
+.sg-tap{font-size:1.05rem;color:var(--pink-600);opacity:.9;animation:sgFade 1.6s ease-in-out infinite}
+@keyframes sgFade{0%,100%{opacity:.55}50%{opacity:1}}
+#scene1 .park{position:absolute;inset:0;width:100%;height:100%;overflow:hidden}
+/* video trao hoa (full màn hình) */
+#scene1 .park-video{width:100%;height:100%;display:block;object-fit:cover;background:#e5f6ff;
+  transition:opacity .5s ease}
+/* GIAI ĐOẠN: video -> animation SVG -> veil "Bắt đầu" */
+#scene1 .park-anim{opacity:0;visibility:hidden;transition:opacity .5s ease}
+#scene1.anim .park-vid{opacity:0;visibility:hidden}
+#scene1.anim .park-anim{opacity:1;visibility:visible}
+#scene1 .park-svg{width:100%;height:100%;display:block;overflow:hidden}
+
+/* ---- animation trao hoa (SVG) ---- */
+.boy,.girl,.bouquet{transform-box:fill-box}
+.girl{transform-origin:50% 72%;transition:transform 1.3s cubic-bezier(.34,1.1,.5,1)}
+#scene1.give .girl{transform:rotate(-5deg)}
+.girl-scale{transform-box:fill-box;transform-origin:50% 100%;transform:scale(.84)}
+.boy{transform-origin:50% 72%;transition:transform 1.3s cubic-bezier(.34,1.1,.5,1)}
+#scene1.give .boy{transform:rotate(3deg)}
+.bouquet{transition:transform 1.4s cubic-bezier(.4,0,.2,1) .3s}
+#scene1.give .bouquet{transform:translate(100px,-20px)}
+/* nền động */
+.cloud{transform-box:fill-box;will-change:transform}
+.cloud1{animation:drift1 46s linear infinite}
+.cloud2{animation:drift2 60s linear infinite}
+.cloud3{animation:drift1 54s linear infinite;animation-delay:-24s}
+@keyframes drift1{from{transform:translateX(-340px)}to{transform:translateX(1340px)}}
+@keyframes drift2{from{transform:translateX(1340px)}to{transform:translateX(-340px)}}
+.sway-a{transform-box:fill-box;transform-origin:50% 100%;animation:sway 7s ease-in-out infinite}
+.sway-b{transform-box:fill-box;transform-origin:50% 100%;animation:sway 6s ease-in-out infinite reverse}
+@keyframes sway{0%,100%{transform:rotate(-.8deg)}50%{transform:rotate(.8deg)}}
+.sparkle-field circle{transform-box:fill-box;transform-origin:center;animation:twk 2.4s ease-in-out infinite}
+.sparkle-field circle:nth-child(2n){animation-delay:.7s}
+.sparkle-field circle:nth-child(3n){animation-delay:1.3s}
+@keyframes twk{0%,100%{opacity:.2;transform:scale(.5)}50%{opacity:1;transform:scale(1.15)}}
+.petal{opacity:0;will-change:transform;animation:petalFall var(--pd,10s) linear var(--pdl,0s) infinite}
+@keyframes petalFall{0%{opacity:0;transform:translate(0,0) rotate(0)}8%{opacity:.9}90%{opacity:.9}
+  100%{opacity:0;transform:translate(var(--px,40px),var(--py,580px)) rotate(var(--pr,240deg))}}
+
+/* lớp mờ + khung ảnh */
+.veil{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:20px;
+  background:rgba(255,240,246,.55);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);
+  opacity:0;pointer-events:none;transition:opacity 1s ease;padding:24px;
+}
+#scene1.reveal .veil{opacity:1;pointer-events:auto}
+/* ảnh cutout (nền trong suốt, tên neon có sẵn trong ảnh) */
+.veil-photo{width:min(94vw,640px);max-height:66vh;object-fit:contain;
+  filter:drop-shadow(0 12px 28px rgba(214,51,108,.28))}
+/* hiệu ứng khung ảnh + chữ */
+#scene1.reveal .veil-photo,
+#scene1.reveal .photo-frame{animation:frameIn .9s cubic-bezier(.2,.9,.3,1.25) both}
+@keyframes frameIn{0%{opacity:0;transform:scale(.62) translateY(26px) rotate(-5deg)}
+  100%{opacity:1;transform:scale(1) translateY(0) rotate(0)}}
+#scene1.reveal .date{animation:dateIn .8s ease .35s both}
+@keyframes dateIn{0%{opacity:0;transform:translateY(16px) scale(.9)}100%{opacity:1;transform:translateY(0) scale(1)}}
+
+.photo-frame{
+  width:min(70vw,300px);aspect-ratio:3/4;background:#fff;
+  border:10px solid #fff;border-radius:8px;box-shadow:var(--shadow);
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+  position:relative;
+}
+.photo-frame::before{
+  content:"Ảnh sẽ thêm sau 💕";position:absolute;color:var(--pink-400);
+  font-size:.9rem;
+}
+.photo-frame img{width:100%;height:100%;object-fit:cover;position:relative}
+.caption-row{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:1.25rem}
+.caption-row .date{font-family:"Dancing Script",cursive;font-weight:700;color:var(--rose);font-size:1.7rem}
+.bike-track{position:relative;width:min(74vw,300px);height:42px;overflow:hidden}
+.bike-road{position:absolute;left:0;right:0;bottom:4px;height:3px;border-radius:2px;opacity:.6;
+  background:repeating-linear-gradient(90deg,var(--rose) 0 10px,transparent 10px 20px);
+  clip-path:inset(0 100% 0 0)}
+.bike{position:absolute;left:0;bottom:2px;width:52px;height:34px;transform:translateX(0)}
+.wheel{transform-box:fill-box;transform-origin:center}
+/* xe chạy + đường hiện dần khi cảnh "Bắt đầu" xuất hiện */
+#scene1.reveal .bike-road{animation:pave 4s linear .3s forwards}
+#scene1.reveal .bike{animation:ride 4s linear .3s forwards}
+#scene1.reveal .wheel{animation:spin .55s linear .3s 8}
+@keyframes pave{to{clip-path:inset(0 0 0 0)}}
+@keyframes ride{from{transform:translateX(0)}to{transform:translateX(calc(min(74vw,300px) - 52px))}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.next-arrow{
+  margin-top:4px;width:56px;height:56px;border-radius:50%;
+  background:linear-gradient(135deg,var(--pink-500),var(--rose));color:#fff;
+  border:none;cursor:pointer;box-shadow:var(--shadow);
+  display:grid;place-items:center;
+  opacity:0;visibility:hidden;pointer-events:none;
+}
+/* nút chỉ hiện sau khi xe dừng, kèm pop + nhún */
+#scene1.arrived .next-arrow{
+  visibility:visible;pointer-events:auto;
+  animation:arrowPop .6s cubic-bezier(.2,.9,.3,1.35) forwards, bob 1.6s ease-in-out .6s infinite;
+}
+@keyframes arrowPop{0%{opacity:0;transform:translateY(14px) scale(.5)}100%{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
