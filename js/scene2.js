@@ -5,6 +5,8 @@ function treeBlow(){                          // chạm cây -> CHÍNH tim trên
   const w=document.getElementById('treeWrap');
   if(w && !w.classList.contains('ready')) return;   // cây/tim chưa vẽ xong + chưa đợi 3s -> chưa cho chạm
   blowing=true;
+  const h0=document.getElementById('s2hint');       // tắt "Chạm vào cây" khi toả (inline đè CSS)
+  if(h0){ h0.style.opacity='0'; h0.textContent=''; }
   heartsFlySpread();                          // animate tim thật (không tạo tim mới)
   treeToCorner();                             // gom cành/thân -> trượt góc phải-dưới, mờ biến mất
   document.getElementById('scene2').classList.add('blow');
