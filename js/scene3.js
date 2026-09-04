@@ -57,6 +57,7 @@ function buildLeaves(n){
     d.style.setProperty('--dx',rand(-16,16)+'px');
     d.style.setProperty('--dy',rand(-22,22)+'px');
     d.style.setProperty('--fd',rand(3,6)+'s');
+    if(LOW_POWER) d.style.filter='none';         // tắt drop-shadow -> compositing rẻ khi lá trôi
     field.appendChild(d);
     // NỞ RA TỪ GIỮA (tụ giữa -> toả từ từ)
     const cx=vpCx-tx, cy=vpCy-ty;
@@ -70,12 +71,13 @@ function buildLeaves(n){
       anim.commitStyles(); anim.cancel();       // giữ vị trí, nhả quyền transform
       d.style.opacity='1';
       d.classList.remove('blooming');           // nhả will-change sau khi bung xong
-      if(LOW_POWER) return;                      // máy yếu: đứng yên, không trôi vô hạn
-      const ex=rand(-150,150), ey=rand(-130,130), er=rand(-22,22);
-      d.animate([                                // trôi qua lại liên tục (di chuyển)
+      // trôi qua lại liên tục (di chuyển). Máy yếu: biên độ nhỏ + chậm hơn -> mượt mà vẫn bay
+      const amp=LOW_POWER?85:150, era=LOW_POWER?12:22;
+      const ex=rand(-amp,amp), ey=rand(-amp,amp), er=rand(-era,era);
+      d.animate([
         {transform:`translate(0px,0px) rotate(${rr}deg)`},
         {transform:`translate(${ex.toFixed(0)}px,${ey.toFixed(0)}px) rotate(${(rr+er).toFixed(0)}deg)`}
-      ],{duration:rand(6000,13000),direction:'alternate',iterations:Infinity,easing:'ease-in-out'});
+      ],{duration:LOW_POWER?rand(10000,18000):rand(6000,13000),direction:'alternate',iterations:Infinity,easing:'ease-in-out'});
     };
   }
 }
