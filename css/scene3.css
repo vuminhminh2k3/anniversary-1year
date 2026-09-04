@@ -8,9 +8,11 @@
   -webkit-mask:var(--heart) center/contain no-repeat;
           mask:var(--heart) center/contain no-repeat;
   background-size:cover;background-position:center;
-  will-change:transform;opacity:0;
-  filter:drop-shadow(0 4px 8px rgba(214,51,108,.25));
+  opacity:0;                       /* KHÔNG will-change thường trực: 156 layer làm máy yếu giật */
+  filter:drop-shadow(0 3px 5px rgba(214,51,108,.22));
 }
+/* chỉ bật will-change lúc đang bung -> nhả sau khi ổn định */
+.leaf-photo.blooming{will-change:transform}
 /* sau khi nở ra từ giữa -> trôi nhẹ tại chỗ */
 .leaf-photo{cursor:pointer}
 .leaf-photo.float{animation:pfloat var(--fd,4s) ease-in-out infinite}

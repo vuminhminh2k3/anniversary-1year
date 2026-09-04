@@ -29,17 +29,28 @@ function openLightbox(src, leaf){
   ],{duration:520,easing:'cubic-bezier(.2,.85,.3,1.2)',fill:'both'});
 }
 function closeLightbox(){ document.getElementById('lightbox').classList.remove('show'); scheduleDialog(); }
+// máy yếu (ít nhân CPU) hoặc user tắt animation -> giảm tải để bung không giật
+const LOW_POWER = ((navigator.hardwareConcurrency||8) <= 4) ||
+  (navigator.deviceMemory!=null && navigator.deviceMemory <= 4) ||
+  (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
 function buildLeaves(n){
   const field=document.getElementById('windField');
   const rand=(a,b)=>a+Math.random()*(b-a);
   const vpCx=window.innerWidth/2, vpCy=window.innerHeight/2;
+  // giãn thời điểm bung đều theo thứ tự -> tránh 156 ảnh cùng decode/animate 1 lúc (nguồn giật chính)
+  const step=LOW_POWER?26:14;
   for(let i=0;i<n;i++){
     const d=document.createElement('div');
     d.className='leaf-photo';
     const sz=rand(40,80);
     d.style.width=sz+'px'; d.style.height=sz+'px';
     d.style.setProperty('--heart',HEART);
-    if(PHOTOS.length){ const src=PHOTOS[i%PHOTOS.length]; d.style.backgroundImage=`url("${src}")`; d.dataset.src=src; }
+    if(PHOTOS.length){
+      const src=PHOTOS[i%PHOTOS.length];
+      const thumb=src.replace('photos/','photos/thumb/');   // lá dùng ảnh nhỏ 240px -> decode nhẹ
+      d.style.backgroundImage=`url("${thumb}")`;
+      d.dataset.src=src;                                     // lightbox mở ảnh full
+    }
     else{ d.style.background=`linear-gradient(135deg,${PLACEHOLDER_GRAD[i%PLACEHOLDER_GRAD.length]},#fff6)`; }
     // vị trí đích (toả khắp màn)
     const tx=rand(3,97)/100*window.innerWidth, ty=rand(6,92)/100*window.innerHeight;
@@ -52,14 +63,17 @@ function buildLeaves(n){
     field.appendChild(d);
     // NỞ RA TỪ GIỮA (tụ giữa -> toả từ từ)
     const cx=vpCx-tx, cy=vpCy-ty;
+    d.classList.add('blooming');                             // bật will-change chỉ lúc bung
     const anim=d.animate([
       {transform:`translate(${cx.toFixed(0)}px,${cy.toFixed(0)}px) scale(.1)`,opacity:0,offset:0},
       {transform:`translate(${cx.toFixed(0)}px,${cy.toFixed(0)}px) scale(.35)`,opacity:1,offset:.12},
       {transform:`translate(0px,0px) scale(1) rotate(${rr}deg)`,opacity:1,offset:1}
-    ],{duration:1900,delay:rand(0,1500),easing:'cubic-bezier(.2,.7,.3,1)',fill:'forwards'});
+    ],{duration:1900,delay:i*step+rand(0,220),easing:'cubic-bezier(.2,.7,.3,1)',fill:'forwards'});
     anim.onfinish=()=>{
       anim.commitStyles(); anim.cancel();       // giữ vị trí, nhả quyền transform
       d.style.opacity='1';
+      d.classList.remove('blooming');           // nhả will-change sau khi bung xong
+      if(LOW_POWER) return;                      // máy yếu: đứng yên, không trôi vô hạn
       const ex=rand(-150,150), ey=rand(-130,130), er=rand(-22,22);
       d.animate([                                // trôi qua lại liên tục (di chuyển)
         {transform:`translate(0px,0px) rotate(${rr}deg)`},
