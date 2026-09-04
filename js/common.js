@@ -12,6 +12,14 @@ const PHOTOS = Array.from({length:162},(_,i)=>i+1)
 const HEART = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 29'%3E%3Cpath d='M16 29S2 20 2 10a8 8 0 0 1 14-5 8 8 0 0 1 14 5c0 10-14 19-14 19z' fill='%23fff'/%3E%3C/svg%3E\")";
 const PLACEHOLDER_GRAD = ["#ff8fab","#ffb3c9","#ff5c8a","#ffd0dd","#ff9ac0","#e83e73"];
 
+/* Máy yếu / cảm ứng (iPad, iPhone...) -> giảm hiệu ứng SVG nặng cho mượt.
+   Safari trên iPad rasterize lại SVG filter mỗi frame -> rất giật khi nhiều tim vừa bay vừa có glow. */
+const LOW_POWER =
+  (window.matchMedia && (matchMedia('(pointer: coarse)').matches ||
+                         matchMedia('(prefers-reduced-motion: reduce)').matches)) ||
+  ((navigator.hardwareConcurrency||8) <= 4) ||
+  (navigator.deviceMemory!=null && navigator.deviceMemory <= 4);
+
 let current = 1;
 
 function go(n){

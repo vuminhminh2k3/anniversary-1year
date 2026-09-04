@@ -26,6 +26,10 @@
 /* CHUYỂN CẢNH: animate CHÍNH tim thật trên cây (toả->thu) + nhóm cành/thân trượt góc */
 #scene2.blow .tree-fx{opacity:0;transition:opacity .5s}
 #scene2.blow #tree-sparkles,#scene2.blow #branch-drops,#scene2.blow #tree-highlights{opacity:0;transition:opacity .4s}
+/* DỪNG HẲN loop nền lúc toả -> nhường CPU cho tim bay (opacity:0 vẫn ngốn rasterize) */
+#scene2.blow .tree-fx .fx-heart,
+#scene2.blow #tree-sparkles .twinkle-star,
+#scene2.blow #branch-drops .svg-drop{animation:none!important}
 #scene2.blow .hint{opacity:0;transition:opacity .3s}
 .fly{will-change:transform}
 /* gió vút qua */

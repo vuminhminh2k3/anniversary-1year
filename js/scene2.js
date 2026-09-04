@@ -75,6 +75,7 @@ function heartsFlySpread(){
     if(pr&&pr.tagName==='g'&&/scale/.test(pr.getAttribute('transform')||'')) pos=pr;
     const r=pos.getBoundingClientRect(); if(r.width<2) return;   // ĐO TRƯỚC reparent (như bản gốc không đốm)
     const [wx,wy]=toUser(r.left+r.width/2, r.top+r.height/2);
+    path.removeAttribute('filter');             // bỏ glow (feDropShadow) -> Safari/iPad hết giật khi tim bay
     path.style.animation='none'; path.style.opacity='1'; path.style.transform='none';
     const fly=document.createElementNS(NS,'g'); fly.setAttribute('class','fly');
     pos.parentNode.insertBefore(fly,pos); fly.appendChild(pos);  // GIỮ nguyên parent -> không đốm đen
@@ -110,6 +111,7 @@ function treeToCorner(){
   const svg=document.querySelector('#scene2 .tree-svg');
   ['#big-trunk','#branches','#twigs','#tree-shadow'].forEach(s=>{
     const el=svg.querySelector(s); if(!el) return;
+    if(s==='#big-trunk') el.style.filter='none';             // bỏ treeShadow (feDropShadow) -> trượt góc mượt
     const op=(s==='#tree-shadow')?0.16:1;                    // giữ độ mờ gốc của bóng
     el.style.transformBox='view-box'; el.style.transformOrigin='600px 900px';
     el.animate([
@@ -168,7 +170,8 @@ function spawnTreeFx(){
     d.style.setProperty('--r',rnd(-260,260)+'deg');
     fx.appendChild(d);
   };
-  for(let i=0;i<16;i++) mk('', rnd(0,100), null);                 // rơi nền khắp cảnh
+  const FXN=LOW_POWER?8:16;
+  for(let i=0;i<FXN;i++) mk('', rnd(0,100), null);                 // rơi nền khắp cảnh
 }
 // tim rơi TỪ CÀNH cây (đặt tại vị trí tim/cành trong SVG, rơi xuống)
 function spawnBranchDrops(){
@@ -181,7 +184,7 @@ function spawnBranchDrops(){
              [1080,460],[930,480],[820,360],[815,195],[720,255],[900,290],[700,555],
              [570,335],[620,160],[465,160],[535,440]];
   const g=document.createElementNS(NS,'g'); g.setAttribute('id','branch-drops'); svg.appendChild(g);
-  src.forEach((p,i)=>{
+  (LOW_POWER?src.filter((_,i)=>i%2===0):src).forEach((p,i)=>{
     const s=rnd(1.4,2.6);
     const wrap=document.createElementNS(NS,'g');
     wrap.setAttribute('transform',`translate(${p[0]},${p[1]}) scale(${s})`);
@@ -231,7 +234,7 @@ function spawnTwigs(){
     p.style.animationDelay=(1.3+i*0.02)+'s';
     g.appendChild(p);
     // thêm 1-2 tim dọc cành (giữa cành) -> 1 cành nhiều tim
-    const n=Math.random()<.55?2:1;
+    const n=LOW_POWER?1:(Math.random()<.55?2:1);   // máy yếu: ít tim thêm -> ít path SVG bay/đập
     for(let k=0;k<n;k++){
       const tt=0.46+k*0.24+rnd(-.05,.05);
       const pos=bez(best,[mx,my],end,tt);
@@ -251,7 +254,8 @@ function spawnSparkles(){
   const g=document.getElementById('tree-sparkles'); if(!g) return;
   g.innerHTML='';
   const NS='http://www.w3.org/2000/svg', rnd=(a,b)=>a+Math.random()*(b-a);
-  for(let i=0;i<26;i++){
+  const SPN=LOW_POWER?12:26;
+  for(let i=0;i<SPN;i++){
     const x=rnd(60,1140), y=rnd(70,510), s=rnd(.55,1.7);
     const wrap=document.createElementNS(NS,'g');
     wrap.setAttribute('transform',`translate(${x},${y}) scale(${s})`);

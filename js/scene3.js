@@ -29,10 +29,7 @@ function openLightbox(src, leaf){
   ],{duration:520,easing:'cubic-bezier(.2,.85,.3,1.2)',fill:'both'});
 }
 function closeLightbox(){ document.getElementById('lightbox').classList.remove('show'); scheduleDialog(); }
-// máy yếu (ít nhân CPU) hoặc user tắt animation -> giảm tải để bung không giật
-const LOW_POWER = ((navigator.hardwareConcurrency||8) <= 4) ||
-  (navigator.deviceMemory!=null && navigator.deviceMemory <= 4) ||
-  (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+// LOW_POWER (máy yếu / cảm ứng) khai báo ở common.js -> giảm tải để bung không giật
 function buildLeaves(n){
   const field=document.getElementById('windField');
   const rand=(a,b)=>a+Math.random()*(b-a);
