@@ -34,8 +34,8 @@ function buildLeaves(n){
   const field=document.getElementById('windField');
   const rand=(a,b)=>a+Math.random()*(b-a);
   const vpCx=window.innerWidth/2, vpCy=window.innerHeight/2;
-  // giãn thời điểm bung đều theo thứ tự -> tránh 156 ảnh cùng decode/animate 1 lúc (nguồn giật chính)
-  const step=LOW_POWER?26:14;
+  // cửa sổ bung GỌN (thumbnail nhẹ nên không cần giãn xa) -> nở liền mạch, không nhỏ giọt từng đợt
+  const win=LOW_POWER?1200:700;
   for(let i=0;i<n;i++){
     const d=document.createElement('div');
     d.className='leaf-photo';
@@ -65,7 +65,7 @@ function buildLeaves(n){
       {transform:`translate(${cx.toFixed(0)}px,${cy.toFixed(0)}px) scale(.1)`,opacity:0,offset:0},
       {transform:`translate(${cx.toFixed(0)}px,${cy.toFixed(0)}px) scale(.35)`,opacity:1,offset:.12},
       {transform:`translate(0px,0px) scale(1) rotate(${rr}deg)`,opacity:1,offset:1}
-    ],{duration:1900,delay:i*step+rand(0,220),easing:'cubic-bezier(.2,.7,.3,1)',fill:'forwards'});
+    ],{duration:1900,delay:(i%24)*18+rand(0,win),easing:'cubic-bezier(.2,.7,.3,1)',fill:'forwards'});
     anim.onfinish=()=>{
       anim.commitStyles(); anim.cancel();       // giữ vị trí, nhả quyền transform
       d.style.opacity='1';
