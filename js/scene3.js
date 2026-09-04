@@ -13,22 +13,32 @@ function initWind(){
     showDialog3();                                                          // bấm nền -> dialog
   });
 }
+// dừng/chạy lại toàn bộ lá đang trôi (WAAPI) -> mở ảnh thì nền tĩnh -> zoom mượt, không rớt frame
+function pauseLeaves(p){
+  const f=document.getElementById('windField'); if(!f) return;
+  f.querySelectorAll('.leaf-photo').forEach(el=>el.getAnimations().forEach(a=>{ try{ p?a.pause():a.play(); }catch(_){} }));
+}
 function openLightbox(src, leaf){
   if(window.playSfx) playSfx('photo_open');
   const lb=document.getElementById('lightbox'), img=document.getElementById('lbImg');
-  img.src=src;
   clearTimeout(dlgTimer);                        // đang xem ảnh thì tạm dừng dialog
-  lb.classList.add('show');
+  pauseLeaves(true);                             // dừng 156 lá trôi -> nhường CPU cho hiệu ứng zoom
   // bay từ vị trí ảnh vừa bấm -> phóng to vào giữa
   const r=leaf.getBoundingClientRect();
   const dx=(r.left+r.width/2)-window.innerWidth/2;
   const dy=(r.top+r.height/2)-window.innerHeight/2;
-  img.animate([
-    {transform:`translate(${dx.toFixed(0)}px,${dy.toFixed(0)}px) scale(.1) rotate(-6deg)`,opacity:.3,offset:0},
-    {transform:'translate(0px,0px) scale(1) rotate(0deg)',opacity:1,offset:1}
-  ],{duration:520,easing:'cubic-bezier(.2,.85,.3,1.2)',fill:'both'});
+  const zoom=()=>{
+    lb.classList.add('show');
+    img.animate([
+      {transform:`translate(${dx.toFixed(0)}px,${dy.toFixed(0)}px) scale(.1) rotate(-6deg)`,opacity:.3,offset:0},
+      {transform:'translate(0px,0px) scale(1) rotate(0deg)',opacity:1,offset:1}
+    ],{duration:520,easing:'cubic-bezier(.2,.85,.3,1.2)',fill:'both'});
+  };
+  img.src=src;
+  // decode ảnh full XONG rồi mới zoom -> không pop/khựng giữa hiệu ứng
+  if(img.decode){ img.decode().then(zoom).catch(zoom); } else zoom();
 }
-function closeLightbox(){ document.getElementById('lightbox').classList.remove('show'); scheduleDialog(); }
+function closeLightbox(){ document.getElementById('lightbox').classList.remove('show'); pauseLeaves(false); scheduleDialog(); }
 // LOW_POWER (máy yếu / cảm ứng) khai báo ở common.js -> giảm tải để bung không giật
 function buildLeaves(n){
   const field=document.getElementById('windField');

@@ -19,6 +19,7 @@ const LOW_POWER =
                          matchMedia('(prefers-reduced-motion: reduce)').matches)) ||
   ((navigator.hardwareConcurrency||8) <= 4) ||
   (navigator.deviceMemory!=null && navigator.deviceMemory <= 4);
+try{ document.documentElement.classList.toggle('low-power', LOW_POWER); }catch(_){}
 
 let current = 1;
 
